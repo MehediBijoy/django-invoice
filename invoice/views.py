@@ -66,7 +66,7 @@ def createInvoice(request):
     }
     return render(request, 'invoice/invoice-create.html', context)
 
-@login_required(login_url='login')
+
 def view_PDF(request, id=None):
     invoice = get_object_or_404(Invoice, id=id)
     lineitem = invoice.lineitem_set.all()
@@ -96,7 +96,6 @@ def generate_PDF(request, id):
     return response
 
 
-@login_required(login_url='login')
 def invoice_send(request, id=None):
     invoice = get_object_or_404(Invoice, id=id)
     send_email = EmailMessage(
