@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'invoice',
-
-    'bulma',
+    'user',
+    'bulma'
 ]
 
 MIDDLEWARE = [

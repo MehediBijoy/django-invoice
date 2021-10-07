@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Invoice(models.Model):
     statusChoice = [
@@ -6,6 +7,7 @@ class Invoice(models.Model):
         ('B', 'Unpaid'),
         ('C', 'Due')
     ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     customer = models.CharField(max_length=100)
     customer_email = models.EmailField(null=True, blank=True)
     billing_address = models.TextField(null=True, blank=True)

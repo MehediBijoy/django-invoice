@@ -1,22 +1,21 @@
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.http import HttpResponse
-from django.views import View
 from django.core.mail import EmailMessage
+from django.contrib.auth.decorators import login_required
 from .models import LineItem, Invoice
 from .forms import LineItemFormset, InvoiceForm
 
 import pdfkit
 
-class InvoiceListView(View):
-    def get(self, *args, **kwargs):
-        invoices = Invoice.objects.all()
-        context = {
-            "invoices":invoices,
-        }
+@login_required(login_url='login')
+def InvoiceListView(request):
+    invoices = Invoice.objects.filter(user=request.user)
+    context = {
+        "invoices":invoices,
+    }
+    return render(request, 'invoice/invoice-list.html', context)
 
-        return render(self.request, 'invoice/invoice-list.html', context)
-
-
+@login_required(login_url='login')
 def createInvoice(request):
     if request.method == 'GET':
         formset = LineItemFormset(request.GET or None)
@@ -26,13 +25,15 @@ def createInvoice(request):
         form = InvoiceForm(request.POST)
         
         if form.is_valid():
-            invoice = Invoice.objects.create(customer=form.data["customer"],
-                    customer_email=form.data["customer_email"],
-                    billing_address = form.data["billing_address"],
-                    date=form.data["date"],
-                    message=form.data["message"],
-                    status = form.data['status']
-                    )
+            invoice = Invoice.objects.create(
+                customer=form.data["customer"],
+                customer_email=form.data["customer_email"],
+                billing_address = form.data["billing_address"],
+                date=form.data["date"],
+                message=form.data["message"],
+                status = form.data['status'],
+                user = request.user
+            )
             
         if formset.is_valid():
             total = 0
@@ -65,7 +66,7 @@ def createInvoice(request):
     }
     return render(request, 'invoice/invoice-create.html', context)
 
-
+@login_required(login_url='login')
 def view_PDF(request, id=None):
     invoice = get_object_or_404(Invoice, id=id)
     lineitem = invoice.lineitem_set.all()
@@ -95,6 +96,7 @@ def generate_PDF(request, id):
     return response
 
 
+@login_required(login_url='login')
 def invoice_send(request, id=None):
     invoice = get_object_or_404(Invoice, id=id)
     send_email = EmailMessage(

@@ -29,12 +29,12 @@
                                 <th>STATUS</th>
                                 <th>VIEW</th>
                                 <th>DOWNLOAD</th>
-                                <th>SEND Email</th>
+                                <th>SEND EMAIL</th>
                             </tr>
                         </thead>
                         {% for invoice in invoices %}
                         <tr>
-                            <td >#{{invoice.id}}</td>
+                            <td width="5%">#{{invoice.id}}</td>
                             <td>{{invoice.customer}}</td>
                             <td> {{invoice.date}}</td>
                             <td>{{invoice.total_amount}}</td>
@@ -47,11 +47,11 @@
                                 <a class="button is-small is-warning" href="#">Due</a>
                                 {% endif %}
                             </td>
-                            <td><a href="{% url 'invoice:invoice-detail' id=invoice.id %}">
-                                <div class="button is-small is-info">View</div>
+                            <td width="5%"><a href="{% url 'invoice:invoice-detail' id=invoice.id %}">
+                                <div class="button is-small is-link is-light">View</div>
                             </a></td>
-                            <td><a href="{% url 'invoice:invoice-download' id=invoice.id %}">Download</a></td>
-                            <td><a href="{% url 'invoice:invoice-send' id=invoice.id %}">send</a></td>
+                            <td width="5%"><a class="button is-primary is-light is-small" href="{% url 'invoice:invoice-download' id=invoice.id %}">Download</a></td>
+                            <td width="5%"><a class="button is-danger is-light is-small" href="{% url 'invoice:invoice-send' id=invoice.id %}">send</a></td>
                         </tr>
                         {% endfor %}
                     </tbody>

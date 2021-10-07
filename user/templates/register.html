@@ -1,0 +1,18 @@
+{% extends 'invoice/base.html' %}
+{% load bulma_tags %}
+
+{% block content %}
+<form class="container" method="POST">
+    {% csrf_token %}
+    <div class="card">
+        <header class="card-header">
+            <p class="card-header-title is-centered">Registration</p>
+        </header>
+        <div class="card-content">
+            {{form|bulma}}
+            <button class="button is-primary" type="submit">Register</button>
+        </div>
+    </div>
+</div>
+<br><br>
+{% endblock %}
