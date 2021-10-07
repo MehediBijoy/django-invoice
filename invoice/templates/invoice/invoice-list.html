@@ -18,7 +18,7 @@
         <div class="card-content">
             <div class="content">
 
-                <table class="table is-fullwidth is-bordered is-hoverable is-striped">
+                <table class="table is-fullwidth is-bordered is-hoverable">
                     <tbody>
                         <thead>
                             <tr>
@@ -29,6 +29,7 @@
                                 <th>STATUS</th>
                                 <th>VIEW</th>
                                 <th>DOWNLOAD</th>
+                                <th>SEND Email</th>
                             </tr>
                         </thead>
                         {% for invoice in invoices %}
@@ -38,9 +39,9 @@
                             <td> {{invoice.date}}</td>
                             <td>{{invoice.total_amount}}</td>
                             <td>
-                                {% if invoice.get_status == 'Paid' %}
+                                {% if invoice.get_status == 'A' %}
                                 <a class="button is-small is-success" href="#">Paid</a>
-                                {% elif invoice.get_status == 'Unpaid' %}
+                                {% elif invoice.get_status == 'B' %}
                                 <a class="button is-small is-danger" href="#">Unpaid</a>
                                 {% else %}
                                 <a class="button is-small is-warning" href="#">Due</a>
@@ -50,14 +51,15 @@
                                 <div class="button is-small is-info">View</div>
                             </a></td>
                             <td><a href="{% url 'invoice:invoice-download' id=invoice.id %}">Download</a></td>
+                            <td><a href="{% url 'invoice:invoice-send' id=invoice.id %}">send</a></td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-
             </div>
         </div>
-    </div><br /><br /><br />
+    </div>
+    <br />
 </div>
 
 {% endblock content %}

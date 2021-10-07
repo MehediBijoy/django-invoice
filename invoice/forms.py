@@ -38,9 +38,9 @@ class InvoiceForm(forms.Form):
     )
 
     statusChoice = [
-        ('Paid', 'Paid'),
-        ('Unpaid', 'Unpaid'),
-        ('Due', 'Due')
+        ('A', 'Paid'),
+        ('B', 'Unpaid'),
+        ('C', 'Due')
     ]
     status = forms.ChoiceField(choices=statusChoice)
 

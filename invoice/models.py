@@ -2,9 +2,9 @@ from django.db import models
 
 class Invoice(models.Model):
     statusChoice = [
-        ('Paid', 'Paid'),
-        ('Unpaid', 'Unpaid'),
-        ('Due', 'Due')
+        ('A', 'Paid'),
+        ('B', 'Unpaid'),
+        ('C', 'Due')
     ]
     customer = models.CharField(max_length=100)
     customer_email = models.EmailField(null=True, blank=True)
@@ -18,7 +18,10 @@ class Invoice(models.Model):
     
     def get_status(self):
         return self.status
-
+    
+    class Meta:
+        ordering = ['status']
+    
 class LineItem(models.Model):
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE)
     service = models.TextField()

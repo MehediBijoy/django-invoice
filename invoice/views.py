@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404, reverse
-from django.template.loader import get_template
 from django.http import HttpResponse
 from django.views import View
+from django.core.mail import EmailMessage
 from .models import LineItem, Invoice
 from .forms import LineItemFormset, InvoiceForm
 
@@ -15,22 +15,9 @@ class InvoiceListView(View):
         }
 
         return render(self.request, 'invoice/invoice-list.html', context)
-    
-    def post(self, request):        
-        invoice_ids = request.POST.getlist("invoice_id")
-        invoice_ids = list(map(int, invoice_ids))
 
-        update_status_for_invoices = int(request.POST['status'])
-        invoices = Invoice.objects.filter(id__in=invoice_ids)
-        if update_status_for_invoices == 0:
-            invoices.update(status=False)
-        else:
-            invoices.update(status=True)
-
-        return redirect('invoice:invoice-list')
 
 def createInvoice(request):
-
     if request.method == 'GET':
         formset = LineItemFormset(request.GET or None)
         form = InvoiceForm(request.GET or None)
@@ -66,10 +53,10 @@ def createInvoice(request):
                         amount=amount).save()
             invoice.total_amount = total
             invoice.save()
-            try:
-                generate_PDF(request, id=invoice.id)
-            except Exception as e:
-                print(f"********{e}********")
+            # try:
+            #     generate_PDF(request, id=invoice.id)
+            # except Exception as e:
+            #     print(f"********{e}********")
             return redirect('/')
     context = {
         "title" : "Invoice Generator",
@@ -102,14 +89,20 @@ def view_PDF(request, id=None):
     return render(request, 'invoice/pdf_template.html', context)
 
 def generate_PDF(request, id):
-    pdf = pdfkit.from_url(request.build_absolute_uri(reverse('invoice:invoice-detail', args=[id])), True)
+    pdf = pdfkit.from_url(request.build_absolute_uri(reverse('invoice:invoice-detail', args=[id])), False)
     response = HttpResponse(pdf,content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="invoice.pdf"'
     return response
 
 
-def change_status(request):
-    return redirect('invoice:invoice-list')
-
-def view_404(request,  *args, **kwargs):
-    return redirect('invoice:invoice-list')
+def invoice_send(request, id=None):
+    invoice = get_object_or_404(Invoice, id=id)
+    send_email = EmailMessage(
+        'Invoice',
+        'check your invoice copy',
+        to=[invoice.customer_email]
+    )
+    pdf = pdfkit.from_url(request.build_absolute_uri(reverse('invoice:invoice-detail', args=[id])), False)
+    send_email.attach('invoice.pdf', pdf, 'application/pdf')
+    send_email.send()
+    return redirect('/')
